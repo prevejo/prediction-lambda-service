@@ -15,6 +15,12 @@ Os dados de conexão com o banco de dados devem ser providos via variáveis de a
 
 --> DB_PASS: password da conexão.
 
+--> DYNAMO_DB_ACESS_KEY: DynamoDB acesskey.
+
+--> DYNAMO_DB_SECRET_KEY: DynamoDB secrect key.
+
+--> INST_OP_STORE_TYPE: identificação do recurso utilizado para consultar a base histórica - DATA_BASE (consulta por banco relacional) ou DYNAMO_DB(consulta pelo serviço AWS DynamoDB).
+
 
 # Empacotamento
 O projeto é empacotado, para posteriormente ser feito o upload na infraestrutura, com:

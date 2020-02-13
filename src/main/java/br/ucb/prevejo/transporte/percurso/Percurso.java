@@ -1,14 +1,14 @@
 package br.ucb.prevejo.transporte.percurso;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 import org.locationtech.jts.geom.LineString;
 
 @Getter
+@Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
+@NoArgsConstructor
 public class Percurso {
 
     @EqualsAndHashCode.Include
@@ -22,7 +22,6 @@ public class Percurso {
 
     private String destino;
 
-    @JsonIgnore
     private LineString geo;
 
     public EnumSentido getSentido() {

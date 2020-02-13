@@ -1,39 +1,25 @@
 package br.ucb.prevejo.transporte.instanteoperacao;
 
-import br.ucb.prevejo.transporte.percurso.EnumSentido;
+import br.ucb.prevejo.core.App;
 import br.ucb.prevejo.transporte.percurso.PercursoDTO;
-import br.ucb.prevejo.shared.util.DateAndTime;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class InstanteOperacaoService {
 
-    private static final InstanteOperacaoService instance = new InstanteOperacaoService();
+    private static InstanteOperacaoService instance = null;
 
-    private InstanteOperacaoService() {
-    }
-
-    private InstanteOperacaoRepository repository = new InstanteOperacaoRepository();
+    private InstanteOperacaoService() {}
 
     public Collection<InstanteOperacao> obterByPercurso(PercursoDTO percurso) {
-        List<Integer> diasSemana = Arrays.asList(DateAndTime.now().getDayOfWeek().ordinal() + 1);
-        //diasSemana = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
-
-        if (percurso.getSentido() == EnumSentido.CIRCULAR) {
-            return repository.findAllByLinha(percurso.getLinha().getNumero(), diasSemana)
-                    .stream().map(inst -> {
-                        inst.setSentido(EnumSentido.CIRCULAR);
-                        return inst;
-                    }).collect(Collectors.toList());
-        }
-
-        return repository.findAllByLinhaAndSentido(percurso.getLinha().getNumero(), percurso.getSentido(), diasSemana);
+        return App.getResources().instanteOperacaoStore().obterByPercurso(percurso);
     }
 
     public static InstanteOperacaoService instance() {
+        if (instance == null) {
+            instance = new InstanteOperacaoService();
+        }
+
         return instance;
     }
 

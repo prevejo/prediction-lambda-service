@@ -5,19 +5,18 @@ import br.ucb.prevejo.estimativa.EstimativaService;
 import br.ucb.prevejo.estimativa.model.EstimativaPercurso;
 import br.ucb.prevejo.request.Request;
 import br.ucb.prevejo.request.VeiculoInstanteSerializer;
+import br.ucb.prevejo.shared.deserializer.LineStringDeserializer;
 import br.ucb.prevejo.shared.deserializer.LocalDateTimeDeserializer;
 import br.ucb.prevejo.shared.interfaces.LocatedEntity;
 import br.ucb.prevejo.shared.serializer.GeometrySerializer;
 import br.ucb.prevejo.shared.serializer.TimeSerializer;
 import br.ucb.prevejo.transporte.parada.Parada;
-import br.ucb.prevejo.transporte.parada.ParadaService;
-import br.ucb.prevejo.transporte.percurso.EnumSentido;
-import br.ucb.prevejo.transporte.percurso.Percurso;
-import br.ucb.prevejo.transporte.percurso.PercursoService;
+import br.ucb.prevejo.transporte.percurso.*;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 
 import java.io.IOException;
@@ -25,7 +24,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Optional;
 
 public class Main implements RequestStreamHandler {
 
@@ -39,18 +37,11 @@ public class Main implements RequestStreamHandler {
         App.useSingletonResources();
 
         try {
-            Optional<Percurso> percursoOp = PercursoService.instance().obterPercursoFetchLinha(
-                    request.getNumero(),
-                    EnumSentido.valueOf(request.getSentido())
-            );
-            Optional<Parada> paradaOp = ParadaService.instance().obterPorCodigo(request.getParada());
-
             Collection<? extends LocatedEntity> veiculos = request.getVeiculos();
 
             objectMapper.writeValue(
                     outputStream,
-                    percursoOp.flatMap(percurso -> paradaOp.map(parada -> response(percurso, parada, veiculos)))
-                    .orElse(null)
+                    response(request.getPercurso(), request.getParada(), veiculos)
             );
         } finally {
             App.shutdown();
@@ -69,13 +60,13 @@ public class Main implements RequestStreamHandler {
         module.addSerializer(new TimeSerializer());
         module.addSerializer(new VeiculoInstanteSerializer());
         module.addDeserializer(Point.class, new br.ucb.prevejo.shared.deserializer.PointDeserializer());
+        module.addDeserializer(LineString.class, new LineStringDeserializer());
         module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
 
         mapper.registerModule(module);
 
         return mapper;
     }
-
 
     /*public static void main(String[] args) throws IOException {
         Main main = new Main();

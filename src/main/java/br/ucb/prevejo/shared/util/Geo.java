@@ -106,6 +106,10 @@ public class Geo {
         return GEOJSON_BUILDER.toString(geometry);
     }
 
+    public static LineString toLineString(Coordinate[] coordinates) {
+        return toLineString(coordinates, FACTORY_WGS84);
+    }
+
     public static LineString toLineString(Coordinate[] coordinates, GeometryFactory factory) {
         return factory.createLineString(coordinates);
     }

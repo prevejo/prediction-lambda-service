@@ -4,7 +4,7 @@ public enum EnumOperadora {
 
     MARECHAL("Marechal", "gps.marechal"),
     URBI("Urbi", "gps.urbi"),
-    SAO_JOSE("SÃ£o José", "gps.saojose"),
+    SAO_JOSE("São José", "gps.saojose"),
     PIRACICABANA("Piracicabana", "gps.piracicabana"),
     PIONEIRA("Pioneira", "gps.pioneira");
 
